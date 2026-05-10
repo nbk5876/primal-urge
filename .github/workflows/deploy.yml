@@ -1,0 +1,27 @@
+name: Deploy to core3.com
+
+on:
+  push:
+    branches: [ main ]
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Install lftp
+        run: sudo apt-get install -y lftp
+
+      - name: Deploy via SFTP
+        env:
+          SFTP_PASSWORD: ${{ secrets.SFTP_PASSWORD }}
+        run: |
+          lftp -u "dh_92keyc,$SFTP_PASSWORD" \
+               -e "set sftp:auto-confirm yes; \
+                   set net:max-retries 3; \
+                   mirror -R --delete --verbose . /home/dh_92keyc/core3.com/PrimalUrge; \
+                   quit" \
+               sftp://core3.com
