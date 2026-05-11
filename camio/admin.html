@@ -1,0 +1,549 @@
+<!DOCTYPE html>
+<!-- -------------------------------------------------------------
+ Page Name: camio/admin.html
+ Deploy:    core3.com/PrimalUrge/camio/admin.html
+ Purpose:   Camio admin — create a kitty movie
+ Created:   5/10/2026
+-------------------------------------------------------------- -->
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Camio Admin · Create a Kitty Movie</title>
+<!-- Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-QM3L2WKM3E"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-QM3L2WKM3E');
+</script>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg:      #f2ede6;
+    --paper:   #ffffff;
+    --ink:     #1e1a16;
+    --muted:   #7a6f65;
+    --accent:  #c05c2e;
+    --accent2: #4a7c6f;
+    --rule:    #e0d9d0;
+    --radius:  10px;
+  }
+
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Arial, sans-serif;
+    background: var(--bg);
+    color: var(--ink);
+    min-height: 100vh;
+  }
+
+  /* ── Header ── */
+  .site-header {
+    background: var(--ink);
+    color: #fff;
+    padding: 1.1rem 1.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .logo { font-size: 1.4rem; font-weight: 800; color: #fff; }
+  .logo span { color: #f4a261; }
+  .header-right { font-size: 0.82rem; color: #aaa; }
+  .header-right a { color: #aaa; text-decoration: none; }
+  .header-right a:hover { color: #fff; }
+
+  /* ── Layout ── */
+  .page {
+    max-width: 720px;
+    margin: 2rem auto;
+    padding: 0 1rem 4rem;
+  }
+
+  .page-title {
+    font-size: 1.5rem;
+    font-weight: 800;
+    margin-bottom: 0.3rem;
+  }
+  .page-sub {
+    font-size: 0.88rem;
+    color: var(--muted);
+    margin-bottom: 2rem;
+  }
+
+  /* ── Steps ── */
+  .step {
+    background: var(--paper);
+    border-radius: var(--radius);
+    padding: 1.5rem;
+    margin-bottom: 1.25rem;
+    box-shadow: 0 1px 6px rgba(0,0,0,0.07);
+  }
+  .step-header {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    margin-bottom: 1.1rem;
+  }
+  .step-num {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background: var(--accent);
+    color: #fff;
+    font-size: 0.9rem;
+    font-weight: 800;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+  .step-title {
+    font-size: 1rem;
+    font-weight: 700;
+  }
+  .step-desc {
+    font-size: 0.82rem;
+    color: var(--muted);
+  }
+
+  /* ── Upload zone ── */
+  .upload-zone {
+    border: 2px dashed var(--rule);
+    border-radius: var(--radius);
+    padding: 2rem 1rem;
+    text-align: center;
+    cursor: pointer;
+    transition: border-color 0.15s, background 0.15s;
+    background: #faf8f5;
+  }
+  .upload-zone:hover, .upload-zone.drag-over {
+    border-color: var(--accent);
+    background: #fff5f0;
+  }
+  .upload-zone input[type=file] { display: none; }
+  .upload-icon { font-size: 2rem; margin-bottom: 0.5rem; }
+  .upload-label {
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: var(--accent);
+    cursor: pointer;
+  }
+  .upload-hint { font-size: 0.78rem; color: var(--muted); margin-top: 4px; }
+
+  .photo-preview {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 1rem;
+  }
+  .photo-thumb {
+    width: 80px;
+    height: 80px;
+    object-fit: cover;
+    border-radius: 6px;
+    border: 2px solid var(--rule);
+  }
+
+  /* ── Cat name field ── */
+  .field-group { margin-bottom: 0.9rem; }
+  .field-group label {
+    display: block;
+    font-size: 0.82rem;
+    font-weight: 700;
+    margin-bottom: 5px;
+    color: var(--ink);
+  }
+  .field-group input, .field-group select, .field-group textarea {
+    width: 100%;
+    padding: 0.55rem 0.8rem;
+    border: 1px solid var(--rule);
+    border-radius: 7px;
+    font-size: 0.92rem;
+    font-family: inherit;
+    background: #faf8f5;
+    color: var(--ink);
+    transition: border-color 0.15s;
+  }
+  .field-group input:focus, .field-group select:focus, .field-group textarea:focus {
+    outline: none;
+    border-color: var(--accent);
+  }
+  .field-group textarea { resize: vertical; min-height: 70px; }
+
+  /* ── Background picker ── */
+  .bg-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 8px;
+  }
+  .bg-option {
+    position: relative;
+    cursor: pointer;
+  }
+  .bg-option input[type=radio] { display: none; }
+  .bg-thumb {
+    width: 100%;
+    aspect-ratio: 16/9;
+    border-radius: 7px;
+    border: 3px solid transparent;
+    overflow: hidden;
+    transition: border-color 0.15s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.8rem;
+  }
+  .bg-option input:checked + .bg-thumb {
+    border-color: var(--accent);
+  }
+  .bg-label {
+    text-align: center;
+    font-size: 0.72rem;
+    color: var(--muted);
+    margin-top: 4px;
+  }
+
+  /* Background color swatches (placeholders until real images exist) */
+  .bg-city    { background: linear-gradient(160deg, #b0c4de 0%, #778899 60%, #c8a882 100%); }
+  .bg-park    { background: linear-gradient(160deg, #90c060 0%, #5a8a3a 50%, #b8d88a 100%); }
+  .bg-beach   { background: linear-gradient(160deg, #87ceeb 0%, #f0d080 60%, #d2b48c 100%); }
+  .bg-market  { background: linear-gradient(160deg, #e8b060 0%, #c87040 50%, #f0d0a0 100%); }
+  .bg-snow    { background: linear-gradient(160deg, #e8f0ff 0%, #c8d8f0 50%, #ffffff 100%); }
+  .bg-night   { background: linear-gradient(160deg, #0a0a2a 0%, #1a1a4a 50%, #f0c040 100%); }
+
+  /* ── Create button ── */
+  .create-wrap {
+    margin-top: 1.5rem;
+    text-align: center;
+  }
+  .btn-create {
+    background: var(--accent);
+    color: #fff;
+    border: none;
+    padding: 0.85rem 2.5rem;
+    border-radius: 10px;
+    font-size: 1.05rem;
+    font-weight: 800;
+    cursor: pointer;
+    letter-spacing: 0.02em;
+    transition: opacity 0.15s, transform 0.1s;
+    box-shadow: 0 4px 14px rgba(192,92,46,0.35);
+  }
+  .btn-create:hover { opacity: 0.9; transform: translateY(-2px); }
+  .btn-create:active { transform: translateY(0); }
+
+  /* ── Processing overlay ── */
+  .processing {
+    display: none;
+    background: var(--paper);
+    border-radius: var(--radius);
+    padding: 2.5rem 1.5rem;
+    text-align: center;
+    box-shadow: 0 1px 6px rgba(0,0,0,0.07);
+    margin-bottom: 1.25rem;
+  }
+  .processing.visible { display: block; }
+  .spinner {
+    width: 48px;
+    height: 48px;
+    border: 4px solid #f0e8e0;
+    border-top-color: var(--accent);
+    border-radius: 50%;
+    animation: spin 0.9s linear infinite;
+    margin: 0 auto 1rem;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+  .processing-title {
+    font-size: 1.1rem;
+    font-weight: 700;
+    margin-bottom: 0.4rem;
+  }
+  .processing-sub {
+    font-size: 0.85rem;
+    color: var(--muted);
+  }
+  .progress-bar {
+    width: 100%;
+    height: 6px;
+    background: #f0e8e0;
+    border-radius: 3px;
+    margin-top: 1.2rem;
+    overflow: hidden;
+  }
+  .progress-fill {
+    height: 100%;
+    background: var(--accent);
+    border-radius: 3px;
+    width: 0%;
+    transition: width 0.4s ease;
+  }
+
+  /* ── Result ── */
+  .result {
+    display: none;
+    background: var(--paper);
+    border-radius: var(--radius);
+    padding: 1.5rem;
+    box-shadow: 0 1px 6px rgba(0,0,0,0.07);
+    margin-bottom: 1.25rem;
+    text-align: center;
+  }
+  .result.visible { display: block; }
+  .result-title {
+    font-size: 1.1rem;
+    font-weight: 800;
+    margin-bottom: 0.4rem;
+    color: var(--accent2);
+  }
+  .result-sub {
+    font-size: 0.85rem;
+    color: var(--muted);
+    margin-bottom: 1.2rem;
+  }
+  .video-placeholder {
+    width: 100%;
+    max-width: 360px;
+    aspect-ratio: 9/16;
+    background: linear-gradient(160deg, #1e1a16 0%, #3a3028 100%);
+    border-radius: 10px;
+    margin: 0 auto 1.2rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    color: #fff;
+    font-size: 0.85rem;
+    gap: 0.5rem;
+  }
+  .video-placeholder span { font-size: 3rem; }
+  .result-actions {
+    display: flex;
+    gap: 0.75rem;
+    justify-content: center;
+    flex-wrap: wrap;
+  }
+  .btn-result {
+    padding: 0.6rem 1.4rem;
+    border-radius: 8px;
+    font-size: 0.88rem;
+    font-weight: 700;
+    cursor: pointer;
+    border: none;
+    text-decoration: none;
+    transition: opacity 0.15s;
+  }
+  .btn-result:hover { opacity: 0.85; }
+  .btn-share { background: var(--accent2); color: #fff; }
+  .btn-publish { background: var(--accent); color: #fff; }
+  .btn-new { background: #f0ebe4; color: var(--ink); }
+
+  @media (max-width: 480px) {
+    .bg-grid { grid-template-columns: repeat(2, 1fr); }
+  }
+</style>
+</head>
+<body>
+
+<header class="site-header">
+  <div class="logo">Ca<span>m</span>io <span style="font-size:0.75rem;font-weight:400;color:#888;margin-left:6px;">Admin</span></div>
+  <div class="header-right"><a href="index.html">← Public Gallery</a></div>
+</header>
+
+<div class="page">
+
+  <div class="page-title">Create a Kitty Movie</div>
+  <div class="page-sub">Upload photos, pick a scene, and let Camio do the rest.</div>
+
+  <!-- Step 1: Cat photos -->
+  <div class="step">
+    <div class="step-header">
+      <div class="step-num">1</div>
+      <div>
+        <div class="step-title">Upload Cat Photos</div>
+        <div class="step-desc">Upload 1 or more clear photos of the cat (front-facing works best)</div>
+      </div>
+    </div>
+    <label class="upload-zone" id="dropZone">
+      <input type="file" id="photoInput" accept="image/*" multiple>
+      <div class="upload-icon">📷</div>
+      <div class="upload-label">Click to upload photos</div>
+      <div class="upload-hint">JPG, PNG · Multiple files OK</div>
+    </label>
+    <div class="photo-preview" id="photoPreview"></div>
+  </div>
+
+  <!-- Step 2: Cat details -->
+  <div class="step">
+    <div class="step-header">
+      <div class="step-num">2</div>
+      <div>
+        <div class="step-title">Cat Details</div>
+        <div class="step-desc">This info will appear on the public gallery card</div>
+      </div>
+    </div>
+    <div class="field-group">
+      <label>Cat Name</label>
+      <input type="text" placeholder="e.g. Saphire" id="catName">
+    </div>
+    <div class="field-group">
+      <label>Breed / Description</label>
+      <input type="text" placeholder="e.g. Female · Ragdoll mix · ~8 weeks · Blue eyes">
+    </div>
+    <div class="field-group">
+      <label>Rehome Fee</label>
+      <input type="text" placeholder="e.g. $150">
+    </div>
+    <div class="field-group">
+      <label>Notes (optional)</label>
+      <textarea placeholder="Personality, special needs, etc."></textarea>
+    </div>
+  </div>
+
+  <!-- Step 3: Background -->
+  <div class="step">
+    <div class="step-header">
+      <div class="step-num">3</div>
+      <div>
+        <div class="step-title">Choose a Background Scene</div>
+        <div class="step-desc">Your cat will dance through this scene</div>
+      </div>
+    </div>
+    <div class="bg-grid">
+      <label class="bg-option">
+        <input type="radio" name="bg" value="city" checked>
+        <div class="bg-thumb bg-city">🏙️</div>
+        <div class="bg-label">City Street</div>
+      </label>
+      <label class="bg-option">
+        <input type="radio" name="bg" value="park">
+        <div class="bg-thumb bg-park">🌳</div>
+        <div class="bg-label">Park</div>
+      </label>
+      <label class="bg-option">
+        <input type="radio" name="bg" value="beach">
+        <div class="bg-thumb bg-beach">🏖️</div>
+        <div class="bg-label">Beach</div>
+      </label>
+      <label class="bg-option">
+        <input type="radio" name="bg" value="market">
+        <div class="bg-thumb bg-market">🛍️</div>
+        <div class="bg-label">Market</div>
+      </label>
+      <label class="bg-option">
+        <input type="radio" name="bg" value="snow">
+        <div class="bg-thumb bg-snow">❄️</div>
+        <div class="bg-label">Snowy Street</div>
+      </label>
+      <label class="bg-option">
+        <input type="radio" name="bg" value="night">
+        <div class="bg-thumb bg-night">🌙</div>
+        <div class="bg-label">Night City</div>
+      </label>
+    </div>
+  </div>
+
+  <!-- Create button -->
+  <div class="create-wrap">
+    <button class="btn-create" id="createBtn" onclick="startCreate()">✨ Create Kitty Movie</button>
+  </div>
+
+  <!-- Processing -->
+  <div class="processing" id="processing">
+    <div class="spinner"></div>
+    <div class="processing-title">Creating your kitty movie…</div>
+    <div class="processing-sub" id="processingMsg">Analyzing cat photos</div>
+    <div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
+  </div>
+
+  <!-- Result -->
+  <div class="result" id="result">
+    <div class="result-title">🎉 Movie Ready!</div>
+    <div class="result-sub" id="resultSub">Saphire is ready to share</div>
+    <div class="video-placeholder">
+      <span>🐱</span>
+      <div>Video Preview</div>
+      <div style="font-size:0.75rem;color:#888;">(mockup — real video coming soon)</div>
+    </div>
+    <div class="result-actions">
+      <button class="btn-result btn-share" onclick="alert('Share link copied!')">🔗 Copy Share Link</button>
+      <button class="btn-result btn-publish" onclick="alert('Published to gallery!')">📢 Publish to Gallery</button>
+      <button class="btn-result btn-new" onclick="resetForm()">+ New Movie</button>
+    </div>
+  </div>
+
+</div>
+
+<script>
+  // Photo upload preview
+  document.getElementById('photoInput').addEventListener('change', function() {
+    const preview = document.getElementById('photoPreview');
+    preview.innerHTML = '';
+    Array.from(this.files).forEach(file => {
+      const img = document.createElement('img');
+      img.className = 'photo-thumb';
+      img.src = URL.createObjectURL(file);
+      preview.appendChild(img);
+    });
+  });
+
+  // Drag and drop
+  const dropZone = document.getElementById('dropZone');
+  dropZone.addEventListener('dragover', e => { e.preventDefault(); dropZone.classList.add('drag-over'); });
+  dropZone.addEventListener('dragleave', () => dropZone.classList.remove('drag-over'));
+  dropZone.addEventListener('drop', e => {
+    e.preventDefault();
+    dropZone.classList.remove('drag-over');
+    document.getElementById('photoInput').files = e.dataTransfer.files;
+    document.getElementById('photoInput').dispatchEvent(new Event('change'));
+  });
+
+  // Simulated create flow
+  function startCreate() {
+    document.getElementById('createBtn').disabled = true;
+    document.getElementById('processing').classList.add('visible');
+    document.getElementById('result').classList.remove('visible');
+    window.scrollTo({ top: document.getElementById('processing').offsetTop - 20, behavior: 'smooth' });
+
+    const messages = [
+      'Analyzing cat photos',
+      'Extracting cat from background',
+      'Compositing scene',
+      'Animating movement',
+      'Rendering final video',
+    ];
+    let step = 0;
+    const fill = document.getElementById('progressFill');
+    const msg  = document.getElementById('processingMsg');
+
+    const interval = setInterval(() => {
+      step++;
+      fill.style.width = (step / messages.length * 100) + '%';
+      if (messages[step]) msg.textContent = messages[step];
+      if (step >= messages.length) {
+        clearInterval(interval);
+        setTimeout(showResult, 600);
+      }
+    }, 900);
+  }
+
+  function showResult() {
+    const name = document.getElementById('catName').value || 'Your kitty';
+    document.getElementById('resultSub').textContent = name + ' is ready to share!';
+    document.getElementById('processing').classList.remove('visible');
+    document.getElementById('result').classList.add('visible');
+    window.scrollTo({ top: document.getElementById('result').offsetTop - 20, behavior: 'smooth' });
+  }
+
+  function resetForm() {
+    document.getElementById('createBtn').disabled = false;
+    document.getElementById('processing').classList.remove('visible');
+    document.getElementById('result').classList.remove('visible');
+    document.getElementById('progressFill').style.width = '0%';
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+</script>
+
+</body>
+</html>

@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<!-- -------------------------------------------------------------
+ Page Name: camio/index.html
+ Deploy:    core3.com/PrimalUrge/camio/
+ Purpose:   Camio public gallery — cats available for rehoming
+ Created:   5/10/2026
+-------------------------------------------------------------- -->
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Camio · Cats Looking for Homes</title>
+<!-- Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-QM3L2WKM3E"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-QM3L2WKM3E');
+</script>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg:      #fdf6ee;
+    --ink:     #1e1a16;
+    --muted:   #7a6f65;
+    --accent:  #c05c2e;
+    --accent2: #4a7c6f;
+    --card-bg: #ffffff;
+    --radius:  12px;
+  }
+
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Arial, sans-serif;
+    background: var(--bg);
+    color: var(--ink);
+    min-height: 100vh;
+  }
+
+  /* ── Header ── */
+  .site-header {
+    background: var(--ink);
+    color: #fff;
+    padding: 1.4rem 1.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+  }
+  .logo {
+    font-size: 1.7rem;
+    font-weight: 800;
+    letter-spacing: -0.02em;
+    color: #fff;
+  }
+  .logo span { color: #f4a261; }
+  .tagline {
+    font-size: 0.82rem;
+    color: #aaa;
+    margin-top: 2px;
+  }
+  .admin-link {
+    font-size: 0.82rem;
+    color: #aaa;
+    text-decoration: none;
+    border: 1px solid #444;
+    padding: 5px 12px;
+    border-radius: 20px;
+    transition: border-color 0.15s, color 0.15s;
+  }
+  .admin-link:hover { color: #fff; border-color: #888; }
+
+  /* ── Hero ── */
+  .hero {
+    text-align: center;
+    padding: 3rem 1rem 2rem;
+  }
+  .hero h1 {
+    font-size: clamp(1.6rem, 4vw, 2.4rem);
+    font-weight: 800;
+    line-height: 1.2;
+    color: var(--ink);
+  }
+  .hero p {
+    margin-top: 0.6rem;
+    font-size: 1rem;
+    color: var(--muted);
+    max-width: 480px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  /* ── Grid ── */
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 1.25rem;
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 0 1rem 3rem;
+  }
+
+  /* ── Cat Card ── */
+  .card {
+    background: var(--card-bg);
+    border-radius: var(--radius);
+    overflow: hidden;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.09);
+    transition: transform 0.18s, box-shadow 0.18s;
+  }
+  .card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 8px 24px rgba(0,0,0,0.14);
+  }
+
+  .card-media {
+    position: relative;
+    width: 100%;
+    aspect-ratio: 4/5;
+    background: #e8e0d8;
+    overflow: hidden;
+  }
+  .card-media img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+  }
+  .play-badge {
+    position: absolute;
+    bottom: 10px;
+    right: 10px;
+    background: rgba(0,0,0,0.55);
+    color: #fff;
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    padding: 4px 9px;
+    border-radius: 20px;
+    backdrop-filter: blur(4px);
+  }
+
+  .card-body {
+    padding: 1rem 1.1rem 1.2rem;
+  }
+  .cat-name {
+    font-size: 1.2rem;
+    font-weight: 800;
+    margin-bottom: 4px;
+  }
+  .cat-meta {
+    font-size: 0.82rem;
+    color: var(--muted);
+    margin-bottom: 0.8rem;
+    line-height: 1.5;
+  }
+  .card-actions {
+    display: flex;
+    gap: 0.5rem;
+  }
+  .btn {
+    flex: 1;
+    text-align: center;
+    padding: 0.5rem 0.75rem;
+    border-radius: 8px;
+    font-size: 0.85rem;
+    font-weight: 700;
+    text-decoration: none;
+    cursor: pointer;
+    border: none;
+    transition: opacity 0.15s;
+  }
+  .btn:hover { opacity: 0.85; }
+  .btn-primary {
+    background: var(--accent);
+    color: #fff;
+  }
+  .btn-secondary {
+    background: #f0ebe4;
+    color: var(--ink);
+  }
+
+  /* ── Footer ── */
+  .site-footer {
+    text-align: center;
+    padding: 1.5rem;
+    font-size: 0.78rem;
+    color: #bbb;
+    border-top: 1px solid #ece6de;
+  }
+
+  @media (max-width: 480px) {
+    .grid { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<header class="site-header">
+  <div>
+    <div class="logo">Ca<span>m</span>io</div>
+    <div class="tagline">Primal Urge Cat Rescue · West Seattle</div>
+  </div>
+  <a class="admin-link" href="admin.html">Admin ↗</a>
+</header>
+
+<section class="hero">
+  <h1>Find Your Perfect Cat</h1>
+  <p>Every cat below is fully vaccinated, spayed/neutered, microchipped, and ready for their forever home.</p>
+</section>
+
+<div class="grid">
+
+  <!-- Cat card: Saphire -->
+  <div class="card">
+    <div class="card-media">
+      <img src="image/IMG_7255.JPEG" alt="Saphire">
+      <span class="play-badge">▶ Watch</span>
+    </div>
+    <div class="card-body">
+      <div class="cat-name">Saphire</div>
+      <div class="cat-meta">
+        Female · Ragdoll mix · ~8 weeks<br>
+        Cream &amp; grey · Blue eyes · Very sweet
+      </div>
+      <div class="card-actions">
+        <a class="btn btn-primary" href="saphire.html">Meet Saphire</a>
+        <a class="btn btn-secondary" href="mailto:primalurgeapetsnackco@gmail.com?subject=Interested in Saphire">Adopt</a>
+      </div>
+    </div>
+  </div>
+
+  <!-- Placeholder card 2 -->
+  <div class="card" style="opacity:0.45;">
+    <div class="card-media" style="display:flex;align-items:center;justify-content:center;">
+      <span style="font-size:3rem;">🐱</span>
+    </div>
+    <div class="card-body">
+      <div class="cat-name">Coming Soon</div>
+      <div class="cat-meta">More kittens arriving soon — check back!</div>
+      <div class="card-actions">
+        <span class="btn btn-secondary" style="cursor:default;">Stay Tuned</span>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<footer class="site-footer">
+  Primal Urge Cat Rescue · West Seattle 98106 · 503-858-9603 · primalurgeapetsnackco@gmail.com
+</footer>
+
+</body>
+</html>
