@@ -2,7 +2,7 @@
 =========================================================================================
 
                                      "Camio"
-									 
+       							   Requirements
 =========================================================================================
 This File:  "C:\Users\gb105\OneDrive\Documents\GitHub\core3.com\PrimalUrge\camio\camio app reqs.txt"
 
@@ -21,16 +21,34 @@ App Functions
 Admin user roles
 - Create Kitty Movie
 
+Collaborators
+- Admin user: Mary Wood
+- Developer: Max (GitHub username TBD)
+- Developer: Tony Byorick  https://github.com/nbk5876
+
 App Hosting
-- Vercel  https://vercel.com/tonys-projects-338d447d
+- Frontend:  core3.com/PrimalUrge/camio/  (GitHub → GitHub Actions → DreamHost SFTP)
+- Backend:   Vercel  https://vercel.com/tonys-projects-338d447d
 
 Video API
-  - Runway 
-  
-  
-  
+- Runway (preferred)
+  NOTE: Runway free tier does NOT include API access — requires a paid plan
+  Alternative: Replicate (pay-per-use, free credits on signup, full API access from day one)
 
+Pages Built (mockup — live at core3.com/PrimalUrge/camio/)
+- camio/index.html      — public gallery (shows available cats, Adopt button)
+- camio/admin.html      — Mary's create screen (photo upload, cat details, background picker, create flow)
+- camio/saphire.html    — individual cat profile page (4-photo grid)
 
+Backend Scaffolded (not yet deployed to Vercel)
+- camio-api/api/generate.js   — receives cat photo + background, calls Runway, returns task ID
+- camio-api/api/status.js     — frontend polls this until video is ready
+- camio-api/vercel.json       — CORS locked to core3.com
 
-
-
+Next Steps
+1. Decide: Runway paid plan vs Replicate
+2. Get API key and add to Vercel project as RUNWAY_API_KEY environment variable
+3. Deploy camio-api folder to Vercel
+4. Wire admin.html to call real API endpoints instead of mock animation
+5. Wire admin "Publish" button to push completed video to public gallery
+6. Add Max as collaborator on GitHub repo (https://github.com/nbk5876/primal-urge)
