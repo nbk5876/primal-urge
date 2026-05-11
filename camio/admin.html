@@ -347,7 +347,7 @@
 <body>
 
 <header class="site-header">
-  <div class="logo">Ca<span>m</span>io <span style="font-size:0.75rem;font-weight:400;color:#888;margin-left:6px;">Admin</span> <span style="font-size:0.65rem;font-weight:400;color:#ccc;margin-left:8px;">v1.2</span></div>
+  <div class="logo">Ca<span>m</span>io <span style="font-size:0.75rem;font-weight:400;color:#888;margin-left:6px;">Admin</span> <span style="font-size:0.65rem;font-weight:400;color:#ccc;margin-left:8px;">v1.3</span></div>
   <div class="header-right"><a href="index.html">← Public Gallery</a></div>
 </header>
 
@@ -389,15 +389,15 @@
     </div>
     <div class="field-group">
       <label>Breed / Description</label>
-      <input type="text" placeholder="e.g. Female · Ragdoll mix · ~8 weeks · Blue eyes">
+      <input type="text" id="catBreed" placeholder="e.g. Female · Ragdoll mix · ~8 weeks · Blue eyes">
     </div>
     <div class="field-group">
       <label>Rehome Fee</label>
-      <input type="text" placeholder="e.g. $150">
+      <input type="text" id="catFee" placeholder="e.g. $150">
     </div>
     <div class="field-group">
       <label>Notes (optional)</label>
-      <textarea placeholder="Personality, special needs, etc."></textarea>
+      <textarea id="catNotes" placeholder="Personality, special needs, etc."></textarea>
     </div>
   </div>
 
@@ -464,7 +464,7 @@
     <div id="videoContainer"></div>
     <div class="result-actions">
       <button class="btn-result btn-share" onclick="alert('Share link copied!')">🔗 Copy Share Link</button>
-      <button class="btn-result btn-publish" onclick="alert('Published to gallery!')">📢 Publish to Gallery</button>
+      <button class="btn-result btn-publish" id="publishBtn" onclick="publishToGallery()">📢 Publish to Gallery</button>
       <button class="btn-result btn-new" onclick="resetForm()">+ New Movie</button>
     </div>
   </div>
@@ -473,6 +473,7 @@
 
 <script>
   const API_BASE = 'https://camio-api.vercel.app';
+  let currentVideoUrl = null;
 
   const BG_PROMPTS = {
     city:   'a busy city street with tall buildings, shops, and pedestrians',
@@ -585,9 +586,39 @@
     }
   }
 
+  async function publishToGallery() {
+    const btn = document.getElementById('publishBtn');
+    btn.disabled = true;
+    btn.textContent = 'Publishing…';
+
+    try {
+      const res = await fetch(`${API_BASE}/api/publish`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          catName:  document.getElementById('catName').value.trim() || 'Kitty',
+          breed:    document.getElementById('catBreed').value.trim(),
+          fee:      document.getElementById('catFee').value.trim(),
+          notes:    document.getElementById('catNotes').value.trim(),
+          videoUrl: currentVideoUrl,
+        }),
+      });
+
+      if (!res.ok) throw new Error('Publish failed');
+      btn.textContent = '✅ Published!';
+    } catch (err) {
+      btn.disabled = false;
+      btn.textContent = '📢 Publish to Gallery';
+      alert('Publish error: ' + err.message);
+    }
+  }
+
   function showResult(catName, videoUrl) {
+    currentVideoUrl = videoUrl;
     document.getElementById('resultSub').textContent = (catName || 'Your kitty') + ' is ready to share!';
     document.getElementById('processing').classList.remove('visible');
+    document.getElementById('publishBtn').disabled = false;
+    document.getElementById('publishBtn').textContent = '📢 Publish to Gallery';
 
     const container = document.getElementById('videoContainer');
     container.innerHTML = '';

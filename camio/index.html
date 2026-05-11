@@ -211,42 +211,47 @@
   <p>Every cat below is fully vaccinated, spayed/neutered, microchipped, and ready for their forever home.</p>
 </section>
 
-<div class="grid">
-
-  <!-- Cat card: Saphire -->
-  <div class="card">
-    <div class="card-media">
-      <img src="image/IMG_7255.JPEG" alt="Saphire">
-      <span class="play-badge">▶ Watch</span>
-    </div>
-    <div class="card-body">
-      <div class="cat-name">Saphire</div>
-      <div class="cat-meta">
-        Female · Ragdoll mix · ~8 weeks<br>
-        Cream &amp; grey · Blue eyes · Very sweet
-      </div>
-      <div class="card-actions">
-        <a class="btn btn-primary" href="saphire.html">Meet Saphire</a>
-        <a class="btn btn-secondary" href="mailto:primalurgeapetsnackco@gmail.com?subject=Interested in Saphire">Adopt</a>
-      </div>
-    </div>
-  </div>
-
-  <!-- Placeholder card 2 -->
-  <div class="card" style="opacity:0.45;">
-    <div class="card-media" style="display:flex;align-items:center;justify-content:center;">
-      <span style="font-size:3rem;">🐱</span>
-    </div>
-    <div class="card-body">
-      <div class="cat-name">Coming Soon</div>
-      <div class="cat-meta">More kittens arriving soon — check back!</div>
-      <div class="card-actions">
-        <span class="btn btn-secondary" style="cursor:default;">Stay Tuned</span>
-      </div>
-    </div>
-  </div>
-
+<div class="grid" id="catGrid">
+  <div style="grid-column:1/-1;text-align:center;padding:3rem;color:#aaa;">Loading cats…</div>
 </div>
+
+<script>
+  const API_BASE = 'https://camio-api.vercel.app';
+
+  async function loadGallery() {
+    const grid = document.getElementById('catGrid');
+    try {
+      const res = await fetch(`${API_BASE}/api/gallery`);
+      const { cats } = await res.json();
+
+      if (!cats || cats.length === 0) {
+        grid.innerHTML = '<div style="grid-column:1/-1;text-align:center;padding:3rem;color:#aaa;">No cats yet — check back soon! 🐱</div>';
+        return;
+      }
+
+      grid.innerHTML = cats.map(cat => `
+        <div class="card">
+          <div class="card-media">
+            <video src="${cat.videoUrl}" autoplay muted loop playsinline style="width:100%;height:100%;object-fit:cover;display:block;"></video>
+            <span class="play-badge">▶ Watch</span>
+          </div>
+          <div class="card-body">
+            <div class="cat-name">${cat.catName}</div>
+            <div class="cat-meta">${cat.breed || ''}</div>
+            ${cat.fee ? `<div class="cat-meta" style="margin-top:4px;font-weight:700;color:#c05c2e;">Rehome fee: ${cat.fee}</div>` : ''}
+            <div class="card-actions" style="margin-top:0.8rem;">
+              <a class="btn btn-secondary" href="mailto:primalurgeapetsnackco@gmail.com?subject=Interested in ${encodeURIComponent(cat.catName)}">Adopt</a>
+            </div>
+          </div>
+        </div>
+      `).join('');
+    } catch (e) {
+      grid.innerHTML = '<div style="grid-column:1/-1;text-align:center;padding:3rem;color:#aaa;">Unable to load gallery — please try again.</div>';
+    }
+  }
+
+  loadGallery();
+</script>
 
 <footer class="site-footer">
   Primal Urge Cat Rescue · West Seattle 98106 · 503-858-9603 · primalurgeapetsnackco@gmail.com
