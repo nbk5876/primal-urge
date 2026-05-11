@@ -461,11 +461,7 @@
   <div class="result" id="result">
     <div class="result-title">🎉 Movie Ready!</div>
     <div class="result-sub" id="resultSub">Saphire is ready to share</div>
-    <div class="video-placeholder">
-      <span>🐱</span>
-      <div>Video Preview</div>
-      <div style="font-size:0.75rem;color:#888;">(mockup — real video coming soon)</div>
-    </div>
+    <div id="videoContainer"></div>
     <div class="result-actions">
       <button class="btn-result btn-share" onclick="alert('Share link copied!')">🔗 Copy Share Link</button>
       <button class="btn-result btn-publish" onclick="alert('Published to gallery!')">📢 Publish to Gallery</button>
@@ -476,6 +472,17 @@
 </div>
 
 <script>
+  const API_BASE = 'https://camio-api.vercel.app';
+
+  const BG_PROMPTS = {
+    city:   'a busy city street with tall buildings, shops, and pedestrians',
+    park:   'a sunny park with trees, green grass, and a walking path',
+    beach:  'a beautiful sandy beach with rolling ocean waves and blue sky',
+    market: 'a colorful outdoor market with vendors, stalls, and shoppers',
+    snow:   'a snowy street in winter with snowflakes gently falling',
+    night:  'a vibrant night city with glowing neon lights and illuminated buildings',
+  };
+
   // Photo upload preview
   document.getElementById('photoInput').addEventListener('change', function() {
     const preview = document.getElementById('photoPreview');
@@ -499,39 +506,103 @@
     document.getElementById('photoInput').dispatchEvent(new Event('change'));
   });
 
-  // Simulated create flow
-  function startCreate() {
+  async function startCreate() {
+    const photoInput = document.getElementById('photoInput');
+    const catName    = document.getElementById('catName').value.trim();
+    const bg         = document.querySelector('input[name="bg"]:checked').value;
+
+    if (!photoInput.files.length) {
+      alert('Please upload at least one cat photo.');
+      return;
+    }
+
     document.getElementById('createBtn').disabled = true;
     document.getElementById('processing').classList.add('visible');
     document.getElementById('result').classList.remove('visible');
     window.scrollTo({ top: document.getElementById('processing').offsetTop - 20, behavior: 'smooth' });
 
-    const messages = [
-      'Analyzing cat photos',
-      'Extracting cat from background',
-      'Compositing scene',
-      'Animating movement',
-      'Rendering final video',
-    ];
-    let step = 0;
-    const fill = document.getElementById('progressFill');
     const msg  = document.getElementById('processingMsg');
+    const fill = document.getElementById('progressFill');
 
-    const interval = setInterval(() => {
-      step++;
-      fill.style.width = (step / messages.length * 100) + '%';
-      if (messages[step]) msg.textContent = messages[step];
-      if (step >= messages.length) {
-        clearInterval(interval);
-        setTimeout(showResult, 600);
+    try {
+      msg.textContent = 'Reading photo…';
+      const imageBase64 = await readFileAsDataURL(photoInput.files[0]);
+
+      msg.textContent = 'Submitting to Runway AI…';
+      const genRes = await fetch(`${API_BASE}/api/generate`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          imageBase64,
+          backgroundPrompt: BG_PROMPTS[bg],
+          catName: catName || 'Kitty',
+        }),
+      });
+
+      if (!genRes.ok) {
+        const err = await genRes.json();
+        throw new Error(err.detail?.message || err.error || 'Generation failed');
       }
-    }, 900);
+
+      const { taskId } = await genRes.json();
+      msg.textContent = 'Runway is generating your video…';
+
+      const videoUrl = await pollStatus(taskId, fill, msg);
+      showResult(catName, videoUrl);
+
+    } catch (err) {
+      document.getElementById('processing').classList.remove('visible');
+      document.getElementById('createBtn').disabled = false;
+      alert('Error: ' + err.message);
+    }
   }
 
-  function showResult() {
-    const name = document.getElementById('catName').value || 'Your kitty';
-    document.getElementById('resultSub').textContent = name + ' is ready to share!';
+  function readFileAsDataURL(file) {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onload = e => resolve(e.target.result);
+      reader.onerror = reject;
+      reader.readAsDataURL(file);
+    });
+  }
+
+  async function pollStatus(taskId, fill, msg) {
+    while (true) {
+      await new Promise(r => setTimeout(r, 3000));
+      const res = await fetch(`${API_BASE}/api/status?taskId=${taskId}`);
+      if (!res.ok) throw new Error('Status check failed');
+      const data = await res.json();
+
+      if (data.progress != null) fill.style.width = (data.progress * 100) + '%';
+
+      if (data.status === 'SUCCEEDED') {
+        fill.style.width = '100%';
+        return data.videoUrl;
+      }
+      if (data.status === 'FAILED') throw new Error('Runway generation failed');
+
+      msg.textContent = data.status === 'RUNNING' ? 'Rendering video…' : 'Processing…';
+    }
+  }
+
+  function showResult(catName, videoUrl) {
+    document.getElementById('resultSub').textContent = (catName || 'Your kitty') + ' is ready to share!';
     document.getElementById('processing').classList.remove('visible');
+
+    const container = document.getElementById('videoContainer');
+    container.innerHTML = '';
+    if (videoUrl) {
+      const video = document.createElement('video');
+      video.src = videoUrl;
+      video.controls = true;
+      video.autoplay = true;
+      video.loop = true;
+      video.style.cssText = 'width:100%;max-width:360px;border-radius:10px;margin-bottom:1.2rem;';
+      container.appendChild(video);
+    } else {
+      container.innerHTML = '<div class="video-placeholder"><span>🐱</span><div>Video unavailable</div></div>';
+    }
+
     document.getElementById('result').classList.add('visible');
     window.scrollTo({ top: document.getElementById('result').offsetTop - 20, behavior: 'smooth' });
   }
