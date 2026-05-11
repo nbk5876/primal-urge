@@ -1,0 +1,36 @@
+
+=========================================================================================
+
+                                     "Camio"
+									 
+=========================================================================================
+This File:  "C:\Users\gb105\OneDrive\Documents\GitHub\core3.com\PrimalUrge\camio\camio app reqs.txt"
+
+The branding name of the app is "Camio"
+The app has a web 2.0 inteface
+The main admin user is mary wood
+The public is a group of people having read access
+
+App Functions
+- Create Kitty Movie
+	The admin user creates a new project
+	The admin user uploads 1 or more images of the subject cat
+	The admin user uploads a background image (could be a quaint city street)
+	The admin user presses "create" and the app creates a video of the subject cat dancing down the street
+
+Admin user roles
+- Create Kitty Movie
+
+App Hosting
+- Vercel  https://vercel.com/tonys-projects-338d447d
+
+Video API
+  - Runway 
+  
+  
+  
+
+
+
+
+
