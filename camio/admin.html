@@ -347,7 +347,7 @@
 <body>
 
 <header class="site-header">
-  <div class="logo">Ca<span>m</span>io <span style="font-size:0.75rem;font-weight:400;color:#888;margin-left:6px;">Admin</span> <span style="font-size:0.65rem;font-weight:400;color:#ccc;margin-left:8px;">v1.3</span></div>
+  <div class="logo">Ca<span>m</span>io <span style="font-size:0.75rem;font-weight:400;color:#888;margin-left:6px;">Admin</span> <span style="font-size:0.65rem;font-weight:400;color:#ccc;margin-left:8px;">v1.4</span></div>
   <div class="header-right"><a href="index.html">← Public Gallery</a></div>
 </header>
 
@@ -580,7 +580,7 @@
         fill.style.width = '100%';
         return data.videoUrl;
       }
-      if (data.status === 'FAILED') throw new Error('Runway generation failed');
+      if (data.status === 'FAILED') throw new Error('Runway generation failed' + (data.failure ? ': ' + data.failure : ''));
 
       msg.textContent = data.status === 'RUNNING' ? 'Rendering video…' : 'Processing…';
     }
