@@ -5,9 +5,9 @@ AI-powered cat video generator for **Primal Urge Cat Rescue** (West Seattle).
 Admin user Mary Wood uploads a photo of a cat, picks a background scene, and Runway AI generates a short video of that cat moving through the scene. Finished videos are published to a public gallery where visitors can browse adoptable cats.
 
 **Live URLs**
-- Public gallery: `https://www.core3.com/PrimalUrge/camio/`
-- Admin create screen: `https://www.core3.com/PrimalUrge/camio/admin.html`
-- Backend API: `https://camio-api.vercel.app`
+- Public gallery: https://www.core3.com/PrimalUrge/camio/
+- Admin create screen: https://www.core3.com/PrimalUrge/camio/admin.html
+- Backend API: https://camio-api.vercel.app
 
 ---
 
