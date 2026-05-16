@@ -1,0 +1,329 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Kitten Admin — Primal Urge</title>
+  <style>
+    :root {
+      --bg: #f7f1e8;
+      --card: #fffaf3;
+      --ink: #2a211a;
+      --muted: #6e6258;
+      --accent: #8b5e3c;
+      --accent2: #c07a4a;
+      --border: #e3d2bd;
+      --green: #2e7d32;
+      --red: #c62828;
+      --radius: 12px;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: Arial, Helvetica, sans-serif; background: var(--bg); color: var(--ink); min-height: 100vh; }
+
+    /* ── PIN screen ── */
+    #pin-screen {
+      display: flex; flex-direction: column; align-items: center; justify-content: center;
+      min-height: 100vh; padding: 24px;
+    }
+    #pin-screen h1 { font-size: 1.6rem; color: var(--accent); margin-bottom: 8px; }
+    #pin-screen p  { color: var(--muted); margin-bottom: 24px; }
+    #pin-input {
+      font-size: 1.8rem; letter-spacing: 0.4em; text-align: center;
+      width: 160px; padding: 10px; border: 2px solid var(--border);
+      border-radius: var(--radius); background: var(--card); color: var(--ink);
+      margin-bottom: 12px;
+    }
+    #pin-error { color: var(--red); font-size: 0.9rem; min-height: 1.2em; }
+
+    /* ── Main layout ── */
+    #app { display: none; max-width: 700px; margin: 0 auto; padding: 20px 16px 60px; }
+    header { text-align: center; margin-bottom: 24px; }
+    header h1 { font-size: 1.5rem; color: var(--accent); }
+    header p  { color: var(--muted); font-size: 0.9rem; margin-top: 4px; }
+
+    /* ── Buttons ── */
+    .btn {
+      display: inline-block; padding: 10px 20px; border: none; border-radius: 8px;
+      font-size: 0.95rem; font-weight: bold; cursor: pointer; transition: opacity 0.15s;
+    }
+    .btn:hover { opacity: 0.85; }
+    .btn-primary { background: var(--accent); color: #fff; }
+    .btn-danger  { background: var(--red);    color: #fff; }
+    .btn-secondary { background: var(--border); color: var(--ink); }
+    .btn-sm { padding: 6px 14px; font-size: 0.82rem; }
+
+    /* ── Add / Edit form card ── */
+    .form-card {
+      background: var(--card); border: 1px solid var(--border); border-radius: var(--radius);
+      padding: 20px; margin-bottom: 24px; box-shadow: 0 2px 8px rgba(0,0,0,0.07);
+    }
+    .form-card h2 { font-size: 1.1rem; color: var(--accent); margin-bottom: 16px; }
+    .field { margin-bottom: 14px; }
+    .field label { display: block; font-size: 0.85rem; font-weight: bold; color: var(--muted); margin-bottom: 4px; }
+    .field input, .field select {
+      width: 100%; padding: 9px 12px; border: 1px solid var(--border);
+      border-radius: 8px; font-size: 0.95rem; background: #fff; color: var(--ink);
+    }
+    .field input:focus, .field select:focus { outline: 2px solid var(--accent2); border-color: var(--accent2); }
+    .field .hint { font-size: 0.78rem; color: var(--muted); margin-top: 3px; }
+    .preview-img { max-width: 140px; border-radius: 8px; margin-top: 8px; display: none; }
+    .form-actions { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 6px; }
+    .msg { padding: 10px 14px; border-radius: 8px; margin-bottom: 16px; font-size: 0.9rem; display: none; }
+    .msg.ok  { background: #e8f5e9; color: var(--green); border: 1px solid #a5d6a7; }
+    .msg.err { background: #ffebee; color: var(--red);   border: 1px solid #ef9a9a; }
+
+    /* ── Kitten list ── */
+    .section-title { font-size: 1.1rem; font-weight: bold; color: var(--accent); margin-bottom: 12px; }
+    .kitty-admin-card {
+      background: var(--card); border: 1px solid var(--border); border-radius: var(--radius);
+      padding: 14px; margin-bottom: 14px; box-shadow: 0 2px 6px rgba(0,0,0,0.06);
+      display: flex; gap: 14px; align-items: flex-start;
+    }
+    .kitty-admin-card img { width: 80px; height: 80px; object-fit: cover; border-radius: 8px; flex-shrink: 0; }
+    .kitty-admin-info { flex: 1; min-width: 0; }
+    .kitty-admin-info .name { font-weight: bold; font-size: 1rem; margin-bottom: 2px; }
+    .kitty-admin-info .meta { font-size: 0.83rem; color: var(--muted); line-height: 1.5; }
+    .kitty-admin-actions { display: flex; gap: 8px; margin-top: 10px; flex-wrap: wrap; }
+    #kitty-list-empty { color: var(--muted); font-style: italic; }
+  </style>
+</head>
+<body>
+
+<!-- ── PIN screen ── -->
+<div id="pin-screen">
+  <h1>🐱 Kitten Admin</h1>
+  <p>Primal Urge Cat Rescue</p>
+  <input id="pin-input" type="password" inputmode="numeric" maxlength="4" placeholder="····" autofocus>
+  <div id="pin-error"></div>
+</div>
+
+<!-- ── Main app ── -->
+<div id="app">
+  <header>
+    <h1>🐱 Kitten Admin</h1>
+    <p>Primal Urge Cat Rescue</p>
+  </header>
+
+  <div class="msg" id="msg"></div>
+
+  <!-- Add / Edit form -->
+  <div class="form-card">
+    <h2 id="form-title">Add Kitten</h2>
+    <input type="hidden" id="edit-id">
+
+    <div class="field">
+      <label>Photo</label>
+      <input type="file" id="f-photo" accept="image/*">
+      <img id="photo-preview" class="preview-img" alt="Preview">
+      <div class="hint" id="photo-hint"></div>
+    </div>
+
+    <div class="field">
+      <label>Description / Name</label>
+      <input type="text" id="f-desc" placeholder="e.g. Female Tuxedo Panda">
+    </div>
+
+    <div class="field">
+      <label>Gender</label>
+      <select id="f-gender">
+        <option value="Female">Female</option>
+        <option value="Male">Male</option>
+      </select>
+    </div>
+
+    <div class="field">
+      <label>Adoption Fee ($)</label>
+      <input type="number" id="f-fee" min="0" placeholder="150">
+    </div>
+
+    <div class="field">
+      <label>Location</label>
+      <input type="text" id="f-location" value="Primal Urge Cat Rescue, West Seattle 98106">
+    </div>
+
+    <div class="form-actions">
+      <button class="btn btn-primary" id="btn-save">Save Kitten</button>
+      <button class="btn btn-secondary" id="btn-cancel" style="display:none;">Cancel Edit</button>
+    </div>
+  </div>
+
+  <!-- Kitten list -->
+  <div class="section-title">Current Kittens</div>
+  <div id="kitty-list"><p id="kitty-list-empty">Loading…</p></div>
+</div>
+
+<script>
+  const PIN = '9874';
+  const API = '/PrimalUrge/admin/save.php';
+
+  // ── PIN ──
+  const pinInput = document.getElementById('pin-input');
+  pinInput.addEventListener('input', function() {
+    if (pinInput.value.length === 4) {
+      if (pinInput.value === PIN) {
+        document.getElementById('pin-screen').style.display = 'none';
+        document.getElementById('app').style.display = 'block';
+        loadKittens();
+      } else {
+        document.getElementById('pin-error').textContent = 'Incorrect PIN — try again';
+        pinInput.value = '';
+      }
+    } else {
+      document.getElementById('pin-error').textContent = '';
+    }
+  });
+
+  // ── Photo preview ──
+  document.getElementById('f-photo').addEventListener('change', function() {
+    const file = this.files[0];
+    const preview = document.getElementById('photo-preview');
+    const hint = document.getElementById('photo-hint');
+    if (file) {
+      preview.src = URL.createObjectURL(file);
+      preview.style.display = 'block';
+      hint.textContent = file.name;
+    } else {
+      preview.style.display = 'none';
+      hint.textContent = '';
+    }
+  });
+
+  // ── Message helper ──
+  function showMsg(text, type) {
+    const el = document.getElementById('msg');
+    el.textContent = text;
+    el.className = 'msg ' + type;
+    el.style.display = 'block';
+    setTimeout(function() { el.style.display = 'none'; }, 4000);
+  }
+
+  // ── Load & render kitten list ──
+  var kittens = [];
+
+  function loadKittens() {
+    fetch('/PrimalUrge/kittens.json?v=' + Date.now())
+      .then(function(r) { return r.json(); })
+      .then(function(data) {
+        kittens = data;
+        renderList();
+      })
+      .catch(function() {
+        document.getElementById('kitty-list').innerHTML =
+          '<p style="color:#c62828;">Could not load kittens.json</p>';
+      });
+  }
+
+  function renderList() {
+    var list = document.getElementById('kitty-list');
+    if (!kittens.length) {
+      list.innerHTML = '<p id="kitty-list-empty">No kittens yet.</p>';
+      return;
+    }
+    list.innerHTML = kittens.map(function(k, i) {
+      return '<div class="kitty-admin-card">' +
+        '<img src="/PrimalUrge/' + k.image + '?v=' + Date.now() + '" alt="Kitten">' +
+        '<div class="kitty-admin-info">' +
+          '<div class="name">' + k.description + '</div>' +
+          '<div class="meta">' +
+            k.gender + ' · $' + k.fee + '<br>' +
+            k.location + '<br>' +
+            '<span style="color:#aaa;font-size:0.78rem;">id: ' + k.id + '</span>' +
+          '</div>' +
+          '<div class="kitty-admin-actions">' +
+            '<button class="btn btn-secondary btn-sm" onclick="editKitten(' + i + ')">Edit</button>' +
+            '<button class="btn btn-danger btn-sm" onclick="deleteKitten(\'' + k.id + '\')">Delete</button>' +
+          '</div>' +
+        '</div>' +
+      '</div>';
+    }).join('');
+  }
+
+  // ── Save (add or edit) ──
+  document.getElementById('btn-save').addEventListener('click', function() {
+    var editId  = document.getElementById('edit-id').value;
+    var desc    = document.getElementById('f-desc').value.trim();
+    var gender  = document.getElementById('f-gender').value;
+    var fee     = document.getElementById('f-fee').value;
+    var location = document.getElementById('f-location').value.trim();
+    var photo   = document.getElementById('f-photo').files[0];
+
+    if (!desc || !fee) { showMsg('Please fill in description and fee.', 'err'); return; }
+    if (!editId && !photo) { showMsg('Please choose a photo for a new kitten.', 'err'); return; }
+
+    var fd = new FormData();
+    fd.append('action', editId ? 'edit' : 'add');
+    fd.append('id', editId);
+    fd.append('description', desc);
+    fd.append('gender', gender);
+    fd.append('fee', fee);
+    fd.append('location', location);
+    if (photo) fd.append('photo', photo);
+
+    fetch(API, { method: 'POST', body: fd })
+      .then(function(r) { return r.json(); })
+      .then(function(res) {
+        if (res.ok) {
+          showMsg(res.message || 'Saved!', 'ok');
+          resetForm();
+          loadKittens();
+        } else {
+          showMsg(res.error || 'Save failed.', 'err');
+        }
+      })
+      .catch(function() { showMsg('Server error.', 'err'); });
+  });
+
+  // ── Edit ──
+  function editKitten(i) {
+    var k = kittens[i];
+    document.getElementById('form-title').textContent = 'Edit Kitten';
+    document.getElementById('edit-id').value = k.id;
+    document.getElementById('f-desc').value = k.description;
+    document.getElementById('f-gender').value = k.gender;
+    document.getElementById('f-fee').value = k.fee;
+    document.getElementById('f-location').value = k.location;
+    document.getElementById('photo-hint').textContent = 'Current: ' + k.image + ' (upload to replace)';
+    var preview = document.getElementById('photo-preview');
+    preview.src = '/PrimalUrge/' + k.image + '?v=' + Date.now();
+    preview.style.display = 'block';
+    document.getElementById('btn-cancel').style.display = 'inline-block';
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
+  // ── Cancel edit ──
+  document.getElementById('btn-cancel').addEventListener('click', resetForm);
+
+  function resetForm() {
+    document.getElementById('form-title').textContent = 'Add Kitten';
+    document.getElementById('edit-id').value = '';
+    document.getElementById('f-desc').value = '';
+    document.getElementById('f-gender').value = 'Female';
+    document.getElementById('f-fee').value = '';
+    document.getElementById('f-location').value = 'Primal Urge Cat Rescue, West Seattle 98106';
+    document.getElementById('f-photo').value = '';
+    document.getElementById('photo-preview').style.display = 'none';
+    document.getElementById('photo-hint').textContent = '';
+    document.getElementById('btn-cancel').style.display = 'none';
+  }
+
+  // ── Delete ──
+  function deleteKitten(id) {
+    if (!confirm('Delete this kitten listing? This cannot be undone.')) return;
+    var fd = new FormData();
+    fd.append('action', 'delete');
+    fd.append('id', id);
+    fetch(API, { method: 'POST', body: fd })
+      .then(function(r) { return r.json(); })
+      .then(function(res) {
+        if (res.ok) {
+          showMsg('Kitten removed.', 'ok');
+          loadKittens();
+        } else {
+          showMsg(res.error || 'Delete failed.', 'err');
+        }
+      })
+      .catch(function() { showMsg('Server error.', 'err'); });
+  }
+</script>
+</body>
+</html>
