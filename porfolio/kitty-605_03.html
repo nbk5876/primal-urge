@@ -111,6 +111,40 @@
       font-size: 0.9rem;
     }
 
+    figure img {
+      cursor: zoom-in;
+    }
+
+    /* ── Lightbox ── */
+    .lightbox {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.88);
+      z-index: 1000;
+      align-items: center;
+      justify-content: center;
+    }
+    .lightbox.open {
+      display: flex;
+    }
+    .lightbox img {
+      max-width: 92vw;
+      max-height: 92vh;
+      border-radius: 8px;
+      box-shadow: 0 8px 40px rgba(0,0,0,0.6);
+    }
+    .lightbox-close {
+      position: fixed;
+      top: 18px;
+      right: 22px;
+      font-size: 2rem;
+      color: #fff;
+      cursor: pointer;
+      line-height: 1;
+      user-select: none;
+    }
+
     @media (max-width: 850px) {
       .gallery {
         grid-template-columns: 1fr;
@@ -128,7 +162,7 @@
     <header>
       <div class="eyebrow">Primal Urge Portfolio</div>
       <h1>Kitty 605-03</h1>
-      <p class="subtitle">Three polished views of a bright-eyed black cat, prepared as a simple mobile-friendly portfolio page.</p>
+      <p class="subtitle">Three polished views of a bright-eyed black cat. Views B and C were created by ChatGPT using the prompts below.</p>
     </header>
                                         
     <section class="gallery" aria-label="Kitty 605-03 photo gallery">
@@ -148,9 +182,31 @@
       </figure>
     </section>
 
+    <div class="lightbox" id="lightbox" role="dialog" aria-modal="true">
+      <span class="lightbox-close" id="lightbox-close" aria-label="Close">&times;</span>
+      <img id="lightbox-img" src="" alt="" />
+    </div>
+
     <footer>
       &copy; Primal Urge &nbsp;·&nbsp; <a href="https://www.core3.com/PrimalUrge/" style="color:var(--accent); text-decoration:none;">core3.com/PrimalUrge</a>
     </footer>
   </main>
+  <script>
+    const lightbox    = document.getElementById('lightbox');
+    const lightboxImg = document.getElementById('lightbox-img');
+
+    document.querySelectorAll('.gallery img').forEach(img => {
+      img.addEventListener('click', () => {
+        lightboxImg.src = img.src;
+        lightboxImg.alt = img.alt;
+        lightbox.classList.add('open');
+      });
+    });
+
+    function closeLightbox() { lightbox.classList.remove('open'); }
+    document.getElementById('lightbox-close').addEventListener('click', closeLightbox);
+    lightbox.addEventListener('click', e => { if (e.target === lightbox) closeLightbox(); });
+    document.addEventListener('keydown', e => { if (e.key === 'Escape') closeLightbox(); });
+  </script>
 </body>
 </html>
