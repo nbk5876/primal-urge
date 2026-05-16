@@ -1,4 +1,44 @@
-# Camio
+# Primal Urge — Cat Rescue & Pet Snacks
+
+Website and tools for **Primal Urge Cat Rescue** (West Seattle).
+
+---
+
+## Kitten Admin System
+
+A mobile-first admin UI that lets Mary manage adoptable kitten listings from her phone — no PC required.
+
+**Live URLs**
+- Public kitten gallery: https://www.core3.com/PrimalUrge/
+- Admin UI: https://www.core3.com/PrimalUrge/admin/
+
+**How it works**
+
+Kitten data is stored in `kittens.json`. The public `index.html` fetches that file at load time and renders cards dynamically — no page rebuild needed when kittens are added or removed.
+
+The admin UI (`admin/index.html`) is PIN-protected. Mary enters the PIN on her phone, then can:
+- **Add** a kitten — fill in description, gender, fee, location, and upload a photo
+- **Edit** any existing kitten — update any field or swap the photo
+- **Delete** a kitten listing
+
+All writes go through `admin/save.php` (PHP 8.2), which reads/writes `kittens.json` and uploads photos to `image/`.
+
+**Files**
+
+| File | Purpose |
+|------|---------|
+| `index.html` | Public page — kittens rendered dynamically via JS fetch |
+| `kittens.json` | Kitten data (id, image, description, gender, fee, location) |
+| `admin/index.html` | PIN-protected admin UI — add, edit, delete kittens |
+| `admin/save.php` | PHP API — reads/writes kittens.json, handles photo uploads |
+
+**Local dev**
+- Host: XAMPP (PHP 8.2 / Apache) at `C:\xampp\htdocs\PrimalUrge\`
+- Test URL: http://localhost/PrimalUrge/admin/
+
+---
+
+## Camio
 
 AI-powered cat video generator for **Primal Urge Cat Rescue** (West Seattle).
 
@@ -38,13 +78,21 @@ Browser (public gallery)
 
 ```
 PrimalUrge/
-├── camio/                        # Frontend — deployed to core3.com/PrimalUrge/camio/
+├── index.html                    # Public site — kitten gallery rendered from kittens.json
+├── kittens.json                  # Kitten data store
+├── image/                        # Kitten photos (uploaded via admin)
+├── admin/
+│   ├── index.html                # PIN-protected kitten admin UI (mobile-first)
+│   └── save.php                  # PHP API — add / edit / delete kittens + photo upload
+├── porfolio/                     # Cat portfolio pages
+│   └── kitty-605_03.html         # Black cat — 3-view lightbox gallery
+├── camio/                        # Camio frontend — deployed to core3.com/PrimalUrge/camio/
 │   ├── index.html                # Public gallery (loads from /api/gallery)
-│   ├── admin.html                # Mary's create screen (v1.5)
+│   ├── admin.html                # Mary's create screen
 │   ├── saphire.html              # Individual cat profile page (4-photo grid)
-│   └── image/                   # Cat photos (static assets)
+│   └── image/                    # Cat photos (static assets)
 │
-└── camio-api/                    # Backend — deployed to Vercel
+└── camio-api/                    # Camio backend — deployed to Vercel
     ├── api/
     │   ├── generate.js           # POST — submit Runway generation task
     │   ├── status.js             # GET  — poll task until video is ready
