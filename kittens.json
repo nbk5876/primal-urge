@@ -2,25 +2,37 @@
   {
     "id": "605_01",
     "image": "image/kitty-605_01.jpg",
-    "description": "Female Tuxedo Panda",
+    "description": "6 weeks Tuxedo Panda Very Social",
     "gender": "Female",
     "fee": 150,
-    "location": "Primal Urge Cat Rescue, West Seattle 98106"
+    "location": "Primal Urge Cat Rescue, West Seattle 98106",
+    "status": "available"
   },
   {
     "id": "605_02",
     "image": "image/kitty-605_02.jpg",
-    "description": "Female Tuxedo Panda",
+    "description": "6 week Tuxedo Panda Very Social",
     "gender": "Female",
     "fee": 150,
-    "location": "Primal Urge Cat Rescue, West Seattle 98106"
+    "location": "Primal Urge Cat Rescue, West Seattle 98106",
+    "status": "available"
   },
   {
     "id": "605_03",
     "image": "porfolio/image/kitty-605_03-view-c.jpg",
-    "description": "Male Black Cat",
+    "description": "9 mo. Black Fluffy Loverboy Fully vetted !",
     "gender": "Male",
     "fee": 100,
-    "location": "Primal Urge Cat Rescue, West Seattle 98106"
+    "location": "Primal Urge Cat Rescue, West Seattle 98106",
+    "status": "available"
+  },
+  {
+    "id": "more_kittens_coming_soon__0a1d",
+    "image": "image/kitty_1779124411_1c4261d1.jpg",
+    "description": "More Kittens Coming Soon !!!",
+    "gender": "Female",
+    "fee": 0,
+    "location": "Primal Urge Cat Rescue, West Seattle 98106",
+    "status": "coming_soon"
   }
 ]

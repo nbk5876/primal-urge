@@ -89,6 +89,12 @@
     .kitty-admin-info .meta { font-size: 0.83rem; color: var(--muted); line-height: 1.5; }
     .kitty-admin-actions { display: flex; gap: 8px; margin-top: 10px; flex-wrap: wrap; }
     #kitty-list-empty { color: var(--muted); font-style: italic; }
+    .status-badge {
+      display: inline-block; font-size: 0.75rem; font-weight: bold;
+      padding: 2px 8px; border-radius: 20px; margin-bottom: 4px;
+    }
+    .status-available  { background: #e8f5e9; color: var(--green); }
+    .status-coming     { background: #fff8e1; color: #f57f17; }
   </style>
 </head>
 <body>
@@ -143,6 +149,14 @@
     <div class="field">
       <label>Location</label>
       <input type="text" id="f-location" value="Primal Urge Cat Rescue, West Seattle 98106">
+    </div>
+
+    <div class="field">
+      <label>Status</label>
+      <select id="f-status">
+        <option value="available">Available Now</option>
+        <option value="coming_soon">Coming Soon</option>
+      </select>
     </div>
 
     <div class="form-actions">
@@ -224,10 +238,14 @@
       return;
     }
     list.innerHTML = kittens.map(function(k, i) {
+      var isComing = k.status === 'coming_soon';
+      var badgeClass = isComing ? 'status-coming' : 'status-available';
+      var badgeText  = isComing ? 'Coming Soon' : 'Available';
       return '<div class="kitty-admin-card">' +
         '<img src="/PrimalUrge/' + k.image + '?v=' + Date.now() + '" alt="Kitten">' +
         '<div class="kitty-admin-info">' +
           '<div class="name">' + k.description + '</div>' +
+          '<div><span class="status-badge ' + badgeClass + '">' + badgeText + '</span></div>' +
           '<div class="meta">' +
             k.gender + ' · $' + k.fee + '<br>' +
             k.location + '<br>' +
@@ -249,6 +267,7 @@
     var gender  = document.getElementById('f-gender').value;
     var fee     = document.getElementById('f-fee').value;
     var location = document.getElementById('f-location').value.trim();
+    var status  = document.getElementById('f-status').value;
     var photo   = document.getElementById('f-photo').files[0];
 
     if (!desc || !fee) { showMsg('Please fill in description and fee.', 'err'); return; }
@@ -261,6 +280,7 @@
     fd.append('gender', gender);
     fd.append('fee', fee);
     fd.append('location', location);
+    fd.append('status', status);
     if (photo) fd.append('photo', photo);
 
     fetch(API, { method: 'POST', body: fd })
@@ -286,6 +306,7 @@
     document.getElementById('f-gender').value = k.gender;
     document.getElementById('f-fee').value = k.fee;
     document.getElementById('f-location').value = k.location;
+    document.getElementById('f-status').value = k.status || 'available';
     document.getElementById('photo-hint').textContent = 'Current: ' + k.image + ' (upload to replace)';
     var preview = document.getElementById('photo-preview');
     preview.src = '/PrimalUrge/' + k.image + '?v=' + Date.now();
@@ -304,6 +325,7 @@
     document.getElementById('f-gender').value = 'Female';
     document.getElementById('f-fee').value = '';
     document.getElementById('f-location').value = 'Primal Urge Cat Rescue, West Seattle 98106';
+    document.getElementById('f-status').value = 'available';
     document.getElementById('f-photo').value = '';
     document.getElementById('photo-preview').style.display = 'none';
     document.getElementById('photo-hint').textContent = '';

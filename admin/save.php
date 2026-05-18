@@ -61,6 +61,7 @@ if ($action === 'add') {
     $gender   = trim($_POST['gender'] ?? 'Female');
     $fee      = (int)($_POST['fee'] ?? 0);
     $location = trim($_POST['location'] ?? '');
+    $status   = in_array($_POST['status'] ?? '', ['available','coming_soon']) ? $_POST['status'] : 'available';
 
     if (!$desc) respond(['ok' => false, 'error' => 'Description is required.']);
 
@@ -73,6 +74,7 @@ if ($action === 'add') {
         'gender'      => $gender,
         'fee'         => $fee,
         'location'    => $location,
+        'status'      => $status,
     ];
 
     if (!save_kittens($KITTENS_FILE, $kittens)) {
@@ -87,6 +89,7 @@ if ($action === 'add') {
     $gender   = trim($_POST['gender'] ?? 'Female');
     $fee      = (int)($_POST['fee'] ?? 0);
     $location = trim($_POST['location'] ?? '');
+    $status   = in_array($_POST['status'] ?? '', ['available','coming_soon']) ? $_POST['status'] : 'available';
 
     if (!$id)   respond(['ok' => false, 'error' => 'Missing id.']);
     if (!$desc) respond(['ok' => false, 'error' => 'Description is required.']);
@@ -100,6 +103,7 @@ if ($action === 'add') {
             $k['gender']      = $gender;
             $k['fee']         = $fee;
             $k['location']    = $location;
+            $k['status']      = $status;
             // Replace photo only if a new one was uploaded
             $new_image = handle_upload('photo', $IMAGE_DIR);
             if ($new_image) $k['image'] = $new_image;

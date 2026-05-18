@@ -343,12 +343,15 @@ I have rehomed and spay/nuter chip rabies & cat vacines since 1975 well over 10,
 </div>
 
 <!-- Start Kitty Section -->
-<h2 style="margin-top:40px;">Kittens Available</h2>
-
-<div class="kitty-gallery" id="kitty-gallery">
+<h2 style="margin-top:40px;">Kittens Available Now</h2>
+<div class="kitty-gallery" id="kitty-gallery-available">
   <p style="color:#888;">Loading...</p>
 </div>
 
+<div id="coming-soon-section" style="display:none;">
+  <h2 style="margin-top:40px;">Kittens Coming Soon</h2>
+  <div class="kitty-gallery" id="kitty-gallery-coming"></div>
+</div>
 <!-- End Kittens Available -->
 
 <script>
@@ -356,24 +359,33 @@ I have rehomed and spay/nuter chip rabies & cat vacines since 1975 well over 10,
   fetch('/PrimalUrge/kittens.json?v=' + Date.now())
     .then(function(r) { return r.json(); })
     .then(function(kittens) {
-      var gallery = document.getElementById('kitty-gallery');
-      if (!kittens.length) {
-        gallery.innerHTML = '<p style="color:#888;">No kittens currently available.</p>';
-        return;
-      }
-      gallery.innerHTML = kittens.map(function(k) {
+      var ts = Date.now();
+      var available   = kittens.filter(function(k) { return (k.status || 'available') === 'available'; });
+      var comingSoon  = kittens.filter(function(k) { return k.status === 'coming_soon'; });
+
+      function makeCard(k) {
         return '<div class="kitty-card" data-kuid="' + k.id + '">' +
-          '<img src="/PrimalUrge/' + k.image + '?v=' + Date.now() + '" alt="Kitten">' +
+          '<img src="/PrimalUrge/' + k.image + '?v=' + ts + '" alt="Kitten">' +
           '<div class="kitty-info">' +
             '<p>' + k.description + '</p>' +
             '<p><strong>Adoption fee:</strong> $' + k.fee + '</p>' +
             '<p><strong>Location:</strong> ' + k.location + '</p>' +
           '</div>' +
         '</div>';
-      }).join('');
+      }
+
+      var availGallery = document.getElementById('kitty-gallery-available');
+      availGallery.innerHTML = available.length
+        ? available.map(makeCard).join('')
+        : '<p style="color:#888;">No kittens currently available.</p>';
+
+      if (comingSoon.length) {
+        document.getElementById('kitty-gallery-coming').innerHTML = comingSoon.map(makeCard).join('');
+        document.getElementById('coming-soon-section').style.display = 'block';
+      }
     })
     .catch(function() {
-      document.getElementById('kitty-gallery').innerHTML =
+      document.getElementById('kitty-gallery-available').innerHTML =
         '<p style="color:#888;">Unable to load kitten listings.</p>';
     });
 })();
