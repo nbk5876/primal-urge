@@ -95,6 +95,25 @@
     }
     .status-available  { background: #e8f5e9; color: var(--green); }
     .status-coming     { background: #fff8e1; color: #f57f17; }
+
+    /* ── Donate toggle ── */
+    .donate-toggle {
+      display: inline-flex; align-items: center; gap: 8px;
+      cursor: pointer; font-size: 0.82rem; font-weight: bold;
+      color: var(--muted); user-select: none;
+    }
+    .donate-toggle input { display: none; }
+    .toggle-track {
+      width: 44px; height: 24px; background: #ccc;
+      border-radius: 12px; position: relative; transition: background 0.2s; flex-shrink: 0;
+    }
+    .toggle-track::after {
+      content: ''; position: absolute; width: 20px; height: 20px;
+      background: #fff; border-radius: 50%; top: 2px; left: 2px;
+      transition: left 0.2s; box-shadow: 0 1px 3px rgba(0,0,0,0.3);
+    }
+    .donate-toggle input:checked + .toggle-track { background: var(--green); }
+    .donate-toggle input:checked + .toggle-track::after { left: 22px; }
   </style>
 </head>
 <body>
@@ -254,6 +273,11 @@
           '<div class="kitty-admin-actions">' +
             '<button class="btn btn-secondary btn-sm" onclick="editKitten(' + i + ')">Edit</button>' +
             '<button class="btn btn-danger btn-sm" onclick="deleteKitten(\'' + k.id + '\')">Delete</button>' +
+            '<label class="donate-toggle">' +
+              '<input type="checkbox" ' + (k.donate ? 'checked' : '') + ' onchange="toggleDonate(\'' + k.id + '\', this.checked)">' +
+              '<span class="toggle-track"></span>' +
+              'Donate button' +
+            '</label>' +
           '</div>' +
         '</div>' +
       '</div>';
@@ -330,6 +354,26 @@
     document.getElementById('photo-preview').style.display = 'none';
     document.getElementById('photo-hint').textContent = '';
     document.getElementById('btn-cancel').style.display = 'none';
+  }
+
+  // ── Donate toggle ──
+  function toggleDonate(id, enabled) {
+    var fd = new FormData();
+    fd.append('action', 'set_donate');
+    fd.append('id', id);
+    fd.append('donate', enabled ? 'true' : 'false');
+    fetch(API, { method: 'POST', body: fd })
+      .then(function(r) { return r.json(); })
+      .then(function(res) {
+        if (res.ok) {
+          showMsg(enabled ? 'Donate button enabled.' : 'Donate button disabled.', 'ok');
+          loadKittens();
+        } else {
+          showMsg(res.error || 'Failed to update.', 'err');
+          loadKittens();
+        }
+      })
+      .catch(function() { showMsg('Server error.', 'err'); loadKittens(); });
   }
 
   // ── Delete ──

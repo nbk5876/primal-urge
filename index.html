@@ -236,6 +236,43 @@
 
 
 
+        /* ── Donate Now button ── */
+        .donate-btn {
+          display: block; width: 100%; margin-top: 10px;
+          padding: 10px; background: #16a34a; color: #fff;
+          border: none; border-radius: 6px; font-size: 1em;
+          font-weight: bold; cursor: pointer; letter-spacing: 0.02em;
+        }
+        .donate-btn:hover { background: #15803d; }
+
+        /* ── Donate modal ── */
+        #donate-modal {
+          display: none; position: fixed; inset: 0; z-index: 1000;
+          align-items: center; justify-content: center;
+        }
+        #donate-modal.open { display: flex; }
+        #donate-overlay {
+          position: absolute; inset: 0; background: rgba(0,0,0,0.55);
+        }
+        #donate-box {
+          position: relative; background: #fff; border-radius: 14px;
+          padding: 28px 24px 24px; max-width: 300px; width: 90%;
+          text-align: center; box-shadow: 0 8px 32px rgba(0,0,0,0.3);
+        }
+        #donate-box h3 { font-size: 1.15rem; color: #333; margin-bottom: 6px; }
+        #donate-box .donate-sub { font-size: 0.9rem; color: #666; margin-bottom: 16px; }
+        #donate-box .donate-qr img { max-width: 180px; border-radius: 8px; margin: 0 auto; }
+        #donate-box .donate-phone {
+          font-size: 1.2rem; font-weight: bold; color: #111; margin-top: 14px;
+        }
+        #donate-box .donate-hint { font-size: 0.8rem; color: #888; margin-top: 4px; }
+        #donate-close {
+          margin-top: 18px; padding: 10px 28px; background: #6b7280;
+          color: #fff; border: none; border-radius: 8px;
+          font-size: 0.95rem; cursor: pointer;
+        }
+        #donate-close:hover { background: #4b5563; }
+
         /* Mobile responsiveness */
         @media (max-width: 768px) {
             .container {
@@ -365,12 +402,16 @@ I have rehomed and spay/nuter chip rabies & cat vacines since 1975 well over 10,
       var comingSoon  = kittens.filter(function(k) { return k.status === 'coming_soon'; });
 
       function makeCard(k) {
+        var donateBtn = k.donate
+          ? '<button class="donate-btn" onclick="openDonateModal()">Donate Now</button>'
+          : '';
         return '<div class="kitty-card" data-kuid="' + k.id + '">' +
           '<img src="/PrimalUrge/' + k.image + '?v=' + ts + '" alt="Kitten">' +
           '<div class="kitty-info">' +
             '<p>' + k.description + '</p>' +
             '<p><strong>Adoption fee:</strong> $' + k.fee + '</p>' +
             '<p><strong>Location:</strong> ' + k.location + '</p>' +
+            donateBtn +
           '</div>' +
         '</div>';
       }
@@ -454,6 +495,30 @@ Kitty image names are kitty-Month-kittyNum.jpg
 <div class="zelle-image">
   <img src="./image/mary_zelle.jpg" alt="Zelle Payment QR">
 </div>
+
+<!-- ── Donate modal ── -->
+<div id="donate-modal" role="dialog" aria-modal="true">
+  <div id="donate-overlay" onclick="closeDonateModal()"></div>
+  <div id="donate-box">
+    <h3>Help Support This Kitten 🐱</h3>
+    <p class="donate-sub">Send a donation via Zelle</p>
+    <div class="donate-qr">
+      <img src="/PrimalUrge/image/mary_zelle.jpg" alt="Zelle QR Code">
+    </div>
+    <div class="donate-phone">503-858-9603</div>
+    <div class="donate-hint">Open your Zelle app and send to this number</div>
+    <button id="donate-close" onclick="closeDonateModal()">Close</button>
+  </div>
+</div>
+
+<script>
+  function openDonateModal() {
+    document.getElementById('donate-modal').classList.add('open');
+  }
+  function closeDonateModal() {
+    document.getElementById('donate-modal').classList.remove('open');
+  }
+</script>
 
 </body>
 </html>

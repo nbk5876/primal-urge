@@ -138,6 +138,29 @@ if ($action === 'add') {
     }
     respond(['ok' => true, 'message' => 'Kitten deleted.']);
 
+} elseif ($action === 'set_donate') {
+
+    $id     = trim($_POST['id'] ?? '');
+    $donate = ($_POST['donate'] ?? 'false') === 'true';
+    if (!$id) respond(['ok' => false, 'error' => 'Missing id.']);
+
+    $kittens = load_kittens($KITTENS_FILE);
+    $found   = false;
+    foreach ($kittens as &$k) {
+        if ($k['id'] === $id) {
+            $k['donate'] = $donate;
+            $found = true;
+            break;
+        }
+    }
+    unset($k);
+
+    if (!$found) respond(['ok' => false, 'error' => 'Kitten not found.']);
+    if (!save_kittens($KITTENS_FILE, $kittens)) {
+        respond(['ok' => false, 'error' => 'Could not write kittens.json.']);
+    }
+    respond(['ok' => true, 'message' => 'Donate button ' . ($donate ? 'enabled' : 'disabled') . '.']);
+
 } else {
     respond(['ok' => false, 'error' => 'Unknown action: ' . htmlspecialchars($action)]);
 }
