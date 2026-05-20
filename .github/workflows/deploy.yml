@@ -22,6 +22,11 @@ jobs:
           lftp -u "dh_92keyc,$SFTP_PASSWORD" \
                -e "set sftp:auto-confirm yes; \
                    set net:max-retries 3; \
-                   mirror -R --delete --verbose . /home/dh_92keyc/core3.com/PrimalUrge; \
+                   mirror -R --delete --verbose \
+                     --exclude-glob kittens.json \
+                     --exclude-glob image \
+                     . /home/dh_92keyc/core3.com/PrimalUrge; \
+                   mirror -R --verbose \
+                     image/ /home/dh_92keyc/core3.com/PrimalUrge/image/; \
                    quit" \
                sftp://core3.com
