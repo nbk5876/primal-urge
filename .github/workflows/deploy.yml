@@ -23,8 +23,8 @@ jobs:
                -e "set sftp:auto-confirm yes; \
                    set net:max-retries 3; \
                    mirror -R --delete --verbose \
-                     --exclude-glob kittens.json \
-                     --exclude-glob image \
+                     --exclude '^kittens\.json$' \
+                     --exclude '^image/' \
                      . /home/dh_92keyc/core3.com/PrimalUrge; \
                    mirror -R --verbose \
                      image/ /home/dh_92keyc/core3.com/PrimalUrge/image/; \
