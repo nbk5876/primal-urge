@@ -380,8 +380,9 @@
 
 <div class="description">
 <h1 id="rescue" class="center-title">Primal Urge Kitty Rescue</h1>
-
-I have rehomed and spay/nuter chip rabies & cat vacines since 1975 well over 10,000 in my lifetime! I'm a solo senior entrepreneur with vetting experience! All kittys will be spay/nuter' fully vacinated & a chip & a rabies shot for permanent rehoming! All these loving kittys are socialized with other kittys , dogs and lots of humans ! Especially with Seniors daily!!! I also work with South County Spay/Nuter Project in Renton, WA.<br><br><center>2025 Spayed/Nuter 148</center>
+<span id="rescue-bio"></span><br><br>
+<center><span id="rescue-stat"></span></center>
+<center id="rescue-pricing-wrap"><br><span id="rescue-pricing"></span></center>
 </div>
 
 <!-- Start Kitty Section -->
@@ -437,9 +438,24 @@ I have rehomed and spay/nuter chip rabies & cat vacines since 1975 well over 10,
 })();
 </script>
 
+<script>
+(function() {
+  fetch('/PrimalUrge/content.json?v=' + Date.now())
+    .then(function(r) { return r.json(); })
+    .then(function(c) {
+      document.getElementById('rescue-bio').textContent     = c.rescue_bio     || '';
+      document.getElementById('rescue-stat').textContent    = c.rescue_stat    || '';
+      document.getElementById('rescue-pricing').textContent = c.rescue_pricing || '';
+      if (!c.rescue_pricing) {
+        document.getElementById('rescue-pricing-wrap').style.display = 'none';
+      }
+    });
+})();
+</script>
+
 <!-- ---------------------------
 
-      Start Puppy Section 
+      Start Puppy Section
 
 -------------------------------- -->
 

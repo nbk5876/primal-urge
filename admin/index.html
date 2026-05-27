@@ -114,6 +114,15 @@
     }
     .donate-toggle input:checked + .toggle-track { background: var(--green); }
     .donate-toggle input:checked + .toggle-track::after { left: 22px; }
+
+    /* ── Page content editor ── */
+    .field textarea {
+      width: 100%; padding: 9px 12px; border: 1px solid var(--border);
+      border-radius: 8px; font-size: 0.95rem; background: #fff; color: var(--ink);
+      resize: vertical; font-family: inherit;
+    }
+    .field textarea:focus { outline: 2px solid var(--accent2); border-color: var(--accent2); }
+    .section-divider { border: none; border-top: 1px solid var(--border); margin: 28px 0 20px; }
   </style>
 </head>
 <body>
@@ -134,6 +143,33 @@
   </header>
 
   <div class="msg" id="msg"></div>
+
+  <!-- Page Content editor -->
+  <div class="form-card">
+    <h2>📝 Page Content</h2>
+
+    <div class="field">
+      <label>Rescue Description</label>
+      <textarea id="c-bio" rows="5" placeholder="About Mary's rescue…"></textarea>
+    </div>
+
+    <div class="field">
+      <label>Yearly Stat</label>
+      <input type="text" id="c-stat" placeholder="e.g. 2025 Spayed/Nuter 148">
+    </div>
+
+    <div class="field">
+      <label>Pricing Info</label>
+      <input type="text" id="c-pricing" placeholder="e.g. Kitty vaccine cost $30 · Spay/neuter $125">
+      <div class="hint">Leave blank to hide this line on the page.</div>
+    </div>
+
+    <div class="form-actions">
+      <button class="btn btn-primary" id="btn-save-content">Save Page Content</button>
+    </div>
+  </div>
+
+  <hr class="section-divider">
 
   <!-- Add / Edit form -->
   <div class="form-card">
@@ -201,6 +237,7 @@
         document.getElementById('pin-screen').style.display = 'none';
         document.getElementById('app').style.display = 'block';
         loadKittens();
+        loadContent();
       } else {
         document.getElementById('pin-error').textContent = 'Incorrect PIN — try again';
         pinInput.value = '';
@@ -375,6 +412,32 @@
       })
       .catch(function() { showMsg('Server error.', 'err'); loadKittens(); });
   }
+
+  // ── Page Content ──
+  function loadContent() {
+    fetch('/PrimalUrge/content.json?v=' + Date.now())
+      .then(function(r) { return r.json(); })
+      .then(function(c) {
+        document.getElementById('c-bio').value     = c.rescue_bio     || '';
+        document.getElementById('c-stat').value    = c.rescue_stat    || '';
+        document.getElementById('c-pricing').value = c.rescue_pricing || '';
+      })
+      .catch(function() { showMsg('Could not load page content.', 'err'); });
+  }
+
+  document.getElementById('btn-save-content').addEventListener('click', function() {
+    var fd = new FormData();
+    fd.append('action',          'save_content');
+    fd.append('rescue_bio',      document.getElementById('c-bio').value.trim());
+    fd.append('rescue_stat',     document.getElementById('c-stat').value.trim());
+    fd.append('rescue_pricing',  document.getElementById('c-pricing').value.trim());
+    fetch(API, { method: 'POST', body: fd })
+      .then(function(r) { return r.json(); })
+      .then(function(res) {
+        showMsg(res.ok ? (res.message || 'Saved!') : (res.error || 'Save failed.'), res.ok ? 'ok' : 'err');
+      })
+      .catch(function() { showMsg('Server error.', 'err'); });
+  });
 
   // ── Delete ──
   function deleteKitten(id) {

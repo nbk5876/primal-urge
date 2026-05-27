@@ -161,6 +161,27 @@ if ($action === 'add') {
     }
     respond(['ok' => true, 'message' => 'Donate button ' . ($donate ? 'enabled' : 'disabled') . '.']);
 
+} elseif ($action === 'save_content') {
+
+    $CONTENT_FILE  = dirname(__DIR__) . '/content.json';
+    $allowed_keys  = ['rescue_bio', 'rescue_stat', 'rescue_pricing'];
+    $content       = file_exists($CONTENT_FILE)
+                     ? (json_decode(file_get_contents($CONTENT_FILE), true) ?: [])
+                     : [];
+    foreach ($allowed_keys as $key) {
+        if (array_key_exists($key, $_POST)) {
+            $content[$key] = trim($_POST[$key]);
+        }
+    }
+    $written = file_put_contents(
+        $CONTENT_FILE,
+        json_encode($content, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE)
+    );
+    if ($written === false) {
+        respond(['ok' => false, 'error' => 'Could not write content.json.']);
+    }
+    respond(['ok' => true, 'message' => 'Page content saved!']);
+
 } else {
     respond(['ok' => false, 'error' => 'Unknown action: ' . htmlspecialchars($action)]);
 }
