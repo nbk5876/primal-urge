@@ -66,8 +66,10 @@
     .field label { display: block; font-size: 0.85rem; font-weight: bold; color: var(--muted); margin-bottom: 4px; }
     .field input, .field select {
       width: 100%; padding: 9px 12px; border: 1px solid var(--border);
-      border-radius: 8px; font-size: 0.95rem; background: #fff; color: var(--ink);
+      border-radius: 8px; font-size: 1rem; background: #fff; color: var(--ink);
     }
+    /* font-size 1rem (16px) prevents iOS Safari from auto-zooming on select tap */
+    .field select { -webkit-appearance: auto; appearance: auto; }
     .field input:focus, .field select:focus { outline: 2px solid var(--accent2); border-color: var(--accent2); }
     .field .hint { font-size: 0.78rem; color: var(--muted); margin-top: 3px; }
     .preview-img { max-width: 140px; border-radius: 8px; margin-top: 8px; display: none; }
@@ -365,7 +367,8 @@
     document.getElementById('form-title').textContent = 'Edit Kitten';
     document.getElementById('edit-id').value = k.id;
     document.getElementById('f-desc').value = k.description;
-    document.getElementById('f-gender').value = k.gender;
+    var g = (k.gender || '').toLowerCase();
+    document.getElementById('f-gender').value = (g === 'male') ? 'Male' : 'Female';
     document.getElementById('f-fee').value = k.fee;
     document.getElementById('f-location').value = k.location;
     document.getElementById('f-status').value = k.status || 'available';

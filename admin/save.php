@@ -58,7 +58,7 @@ if ($action === 'add') {
     }
 
     $desc     = trim($_POST['description'] ?? '');
-    $gender   = trim($_POST['gender'] ?? 'Female');
+    $gender   = strtolower(trim($_POST['gender'] ?? '')) === 'male' ? 'Male' : 'Female';
     $fee      = (int)($_POST['fee'] ?? 0);
     $location = trim($_POST['location'] ?? '');
     $status   = in_array($_POST['status'] ?? '', ['available','coming_soon']) ? $_POST['status'] : 'available';
@@ -86,7 +86,7 @@ if ($action === 'add') {
 
     $id       = trim($_POST['id'] ?? '');
     $desc     = trim($_POST['description'] ?? '');
-    $gender   = trim($_POST['gender'] ?? 'Female');
+    $gender   = strtolower(trim($_POST['gender'] ?? '')) === 'male' ? 'Male' : 'Female';
     $fee      = (int)($_POST['fee'] ?? 0);
     $location = trim($_POST['location'] ?? '');
     $status   = in_array($_POST['status'] ?? '', ['available','coming_soon']) ? $_POST['status'] : 'available';
