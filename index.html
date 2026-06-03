@@ -413,7 +413,7 @@
         return '<div class="kitty-card" data-kuid="' + k.id + '">' +
           '<img src="/PrimalUrge/' + k.image + '?v=' + ts + '" alt="Kitten">' +
           '<div class="kitty-info">' +
-            '<p>' + k.description + '</p>' +
+            '<p>' + k.description.replace(/\n/g, '<br>') + '</p>' +
             (k.gender ? '<p><strong>Gender:</strong> ' + k.gender + '</p>' : '') +
             '<p><strong>Adoption fee:</strong> $' + k.fee + '</p>' +
             '<p><strong>Location:</strong> ' + k.location + '</p>' +
