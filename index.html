@@ -444,9 +444,9 @@
   fetch('/PrimalUrge/content.json?v=' + Date.now())
     .then(function(r) { return r.json(); })
     .then(function(c) {
-      document.getElementById('rescue-bio').textContent     = c.rescue_bio     || '';
-      document.getElementById('rescue-stat').textContent    = c.rescue_stat    || '';
-      document.getElementById('rescue-pricing').textContent = c.rescue_pricing || '';
+      document.getElementById('rescue-bio').innerHTML     = (c.rescue_bio     || '').replace(/\n/g, '<br>');
+      document.getElementById('rescue-stat').innerHTML    = (c.rescue_stat    || '').replace(/\n/g, '<br>');
+      document.getElementById('rescue-pricing').innerHTML = (c.rescue_pricing || '').replace(/\n/g, '<br>');
       if (!c.rescue_pricing) {
         document.getElementById('rescue-pricing-wrap').style.display = 'none';
       }
