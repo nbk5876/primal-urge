@@ -31,13 +31,13 @@
 </script>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Primal Urge - Pet Snacks</title>
+    <title>Primal Urge - Kitty Rescue</title>
 
     <!-- Open Graph Meta Tags for Link Previews -->
-    <meta property="og:title" content="Primal Urge - Pet Snacks" />
-    <meta property="og:description" content="Primal Urge Pet Snacks are made in the USA with just one ingredient–wholesome, USDA-approved white breast meat chicken." />
+    <meta property="og:title" content="Primal Urge - Kitty Rescue" />
+    <meta property="og:description" content="Primal Urge Kitty Rescue - kittens available for adoption and rescue support in Seattle." />
     <meta property="og:image" content="https://www.core3.com/PrimalUrge/image/bus-card.png" />
-    <meta property="og:url" content="https://www.core3.com/PrimalUrge/" />
+    <meta property="og:url" content="https://www.core3.com/PrimalUrge/rescue.html" />
     <meta property="og:type" content="website" />
 
     <style>
@@ -313,72 +313,170 @@
     </style>
 </head>
 <body>
-
     <div class="container">
-<div class="gallery">
-    <div class="snack-image">
-        <img src="./image/bus-card.png" alt="Business Card">
-    </div>
+<div class="description">
+<h1 id="rescue" class="center-title">Primal Urge Kitty Rescue</h1>
+<span id="rescue-bio"></span><br><br>
+<center><span id="rescue-stat"></span></center>
+<center id="rescue-pricing-wrap"><br><span id="rescue-pricing"></span></center>
 </div>
 
-        <h1>Welcome to: <br>Primal Urge<br>A Pet Snack Co.</h1>
-        <h2>100% Pure <br>Chicken Breast Snacks</h2>
-
-        <div class="description">
-            <p>Primal Urge Pet Snacks are made in the USA with just one ingredient–wholesome, USDA-approved white breast meat chicken.</p>
-
-            <p>Primal Urge Pet Snacks can help entice a finicky eater when crumbled over their regular kibble.</p>
-
-            <p>Freeze-dried to perfection without the use of chemicals, additives or preservatives.</p>
-            <p>Makes a perfect reward and training treat for your dog or cat. Zero fillers, grains or mystery ingredients means you'll love feeding your precious pet these high-protein, low-calorie snacks almost as much as they love eating them!</p>
-
-            <p>Proceeds go to benefit of Primal Urge Cat Rescue</p>
-
-        </div>
-
-<div class="gallery">
-    <div class="snack-image">
-        <img src="./image/snackServing3.jpg" alt="Serving 2 - Chicken Snacks">
-    </div>
-    <div class="snack-image">
-        <img src="./image/snackServing4Z.jpg" alt="Serving 3 - Chicken Snacks">
-    </div>
-    <div class="snack-image">
-        <img src="./image/pur-pak-new.jpg" alt="Serving 1 - Chicken Snacks">
-    </div>
-    <div class="snack-image">
-        <img src="./image/pur-pak-multi.jpg" alt="Serving 1 - Chicken Snacks">
-    </div>
+<!-- Start Kitty Section -->
+<h2 style="margin-top:40px;">Kittens Available Now</h2>
+<div class="kitty-gallery" id="kitty-gallery-available">
+  <p style="color:#888;">Loading...</p>
 </div>
 
-        <div class="description">
-            <p>Primal Urge is a new business based in Seattle, dedicated to providing 100% pure, freeze-dried chicken breast snacks for pets. Your furry friends deserve the best, and we deliver high-quality snacks your pets will love!</p>
+<div id="coming-soon-section" style="display:none;">
+  <h2 style="margin-top:40px;">Kittens Coming Soon</h2>
+  <div class="kitty-gallery" id="kitty-gallery-coming"></div>
+</div>
+<!-- End Kittens Available -->
 
-            <p>Primal Urge Pet Snacks are 100% Freeze-dried chicken its high in protein and low in fat, and can be a good option for pets that need to maintain a healthy weight or are on a restricted diet. Here are some nutritional values for our freeze-dried chicken:</p>
+<script>
+(function() {
+  fetch('/PrimalUrge/kittens.json?v=' + Date.now())
+    .then(function(r) { return r.json(); })
+    .then(function(kittens) {
+      var ts = Date.now();
+      var available   = kittens.filter(function(k) { return (k.status || 'available') === 'available'; });
+      var comingSoon  = kittens.filter(function(k) { return k.status === 'coming_soon'; });
 
-            <p><strong>Protein:</strong> Freeze-dried chicken can contain at least 35% crude protein.</p>
-            <p><strong>Fat:</strong> Freeze-dried chicken can contain at least 30% crude fat.</p>
-            <p><strong>Fiber:</strong> Freeze-dried chicken can contain a maximum of 2% crude fiber.</p>
-            <p><strong>Moisture:</strong> Freeze-dried chicken can contain a maximum of 6% moisture.</p>
-            <p><strong>Calories:</strong> A 0.45 cup (17g) serving of freeze-dried chicken contains 81 calories.</p>
-            <p><strong>Cholesterol:</strong> A 0.45 cup (17g) serving of freeze-dried chicken contains 14mg of cholesterol.</p>
-            <p><strong>Sodium:</strong> A 0.45 cup (17g) serving of freeze-dried chicken contains 306mg of sodium.</p>
-            <p>Primal Urge Pet Snacks, Freeze-dried chicken is free from All preservatives, hormones, and antibiotics.</p>
+      function makeCard(k) {
+        var donateBtn = k.donate
+          ? '<button class="donate-btn" onclick="openDonateModal()">Donate Now</button>'
+          : '';
+        return '<div class="kitty-card" data-kuid="' + k.id + '">' +
+          '<img src="/PrimalUrge/' + k.image + '?v=' + ts + '" alt="Kitten">' +
+          '<div class="kitty-info">' +
+            '<p>' + k.description.replace(/\n/g, '<br>') + '</p>' +
+            (k.gender ? '<p><strong>Gender:</strong> ' + k.gender + '</p>' : '') +
+            '<p><strong>Adoption fee:</strong> $' + k.fee + '</p>' +
+            '<p><strong>Location:</strong> ' + k.location + '</p>' +
+            donateBtn +
+          '</div>' +
+        '</div>';
+      }
 
-            <p style="text-align: center; color: black;">
-                4 oz. Bag $15.00<br>
-            <a href="https://www.zellepay.com/" target="_blank">Zelle</a> and <a href="https://cash.app/" target="_blank">Cash App</a> accepted<br>
-            Local Seattle, WA pickup or USPS avalible, <br>
-            Ships to USA, local tax & shipping fees apply</p>
+      var availGallery = document.getElementById('kitty-gallery-available');
+      availGallery.innerHTML = available.length
+        ? available.map(makeCard).join('')
+        : '<p style="color:#888;">No kittens currently available.</p>';
+
+      if (comingSoon.length) {
+        document.getElementById('kitty-gallery-coming').innerHTML = comingSoon.map(makeCard).join('');
+        document.getElementById('coming-soon-section').style.display = 'block';
+      }
+    })
+    .catch(function() {
+      document.getElementById('kitty-gallery-available').innerHTML =
+        '<p style="color:#888;">Unable to load kitten listings.</p>';
+    });
+})();
+</script>
+
+<script>
+(function() {
+  fetch('/PrimalUrge/content.json?v=' + Date.now())
+    .then(function(r) { return r.json(); })
+    .then(function(c) {
+      document.getElementById('rescue-bio').innerHTML     = (c.rescue_bio     || '').replace(/\n/g, '<br>');
+      document.getElementById('rescue-stat').innerHTML    = (c.rescue_stat    || '').replace(/\n/g, '<br>');
+      document.getElementById('rescue-pricing').innerHTML = (c.rescue_pricing || '').replace(/\n/g, '<br>');
+      if (!c.rescue_pricing) {
+        document.getElementById('rescue-pricing-wrap').style.display = 'none';
+      }
+    });
+})();
+</script>
+
+<!-- ---------------------------
+
+      Start Puppy Section
+
+-------------------------------- -->
+
+<!--
+
+<h2 style="margin-top:40px;">Puppies Available</h2>
+
+-->
+
+<!-- -----------------------------------------------
+Kitty image names are kitty-Month-kittyNum.jpg
+------------------------------------------------ -->
+<div class="kitty-gallery">
+
+<!-- Another kitty  -->
+<!-- 
+
+  <div class="kitty-card" data-kuid="1209">
+    <img src="./image/pup-1202.jpg?v=20250815" alt="Kitten">
+    <div class="kitty-info">
+      <p>Female 8 wks 1/2 Husky</p>
+      <p><strong>Adoption fee:</strong>$100 each</p>
+      <p><strong>Location:</strong> Primal Urge Cat Rescue, West Seattle 98106</p>
+    </div>
+  </div>
+-->
+
+
+<!-- End Puppys Availible -->
+</div>
+
+
+<!-- Begin Coming Soon -->
+
+<!-- End Coming Soon -->
+
+
+
+
+        <div class="social-links">
+            <h3>Find us online:</h3>
+            <a href="https://www.facebook.com/profile.php?id=61566955841096&mibextid=ZbWKwL" target="_blank">Facebook</a>
+            <a href="https://www.instagram.com/primalurgeapetsnackco/" target="_blank">Instagram</a>
+
+            <a href="https://www.tiktok.com/@primalurgecatrescue?_r=1&_t=ZP-95OhbVf0zFO" target="_blank">TikTok</a>
+
+            <a href="https://offerup.co/profile/primalurge" target="_blank">OfferUp</a>
         </div>
 
+        <!-- <a href="https://www.tiktok.com/@maryjanewood64?_t=8qbVZX6CWMs&_r=1" target="_blank">TikTok</a> -->
 
-        <div class="contact">
-            <p>Contact us: 503-858-9603<br>
-            primalurgeapetsnackco@gmail.com</p>
-        </div>
+
 
     </div>
+
+
+<div class="zelle-image">
+  <img src="./image/mary_zelle.jpg" alt="Zelle Payment QR">
+</div>
+
+<!-- ── Donate modal ── -->
+<div id="donate-modal" role="dialog" aria-modal="true">
+  <div id="donate-overlay" onclick="closeDonateModal()"></div>
+  <div id="donate-box">
+    <h3>Help Support This Kitten 🐱</h3>
+    <p class="donate-sub">Send a donation via Zelle</p>
+    <div class="donate-qr">
+      <img src="/PrimalUrge/image/mary_zelle.jpg" alt="Zelle QR Code">
+    </div>
+    <div class="donate-phone">503-858-9603</div>
+    <div class="donate-hint">Open your Zelle app and send to this number</div>
+    <button id="donate-close" onclick="closeDonateModal()">Close</button>
+  </div>
+</div>
+
+<script>
+  function openDonateModal() {
+    document.getElementById('donate-modal').classList.add('open');
+  }
+  function closeDonateModal() {
+    document.getElementById('donate-modal').classList.remove('open');
+  }
+</script>
+
 
 </body>
 </html>
